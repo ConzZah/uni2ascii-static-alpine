@@ -5,7 +5,7 @@
 doso=""
 [ "$(id -u)" = "1000" ] && doso="doas"
 
-$doso apk add build-base 7zip
+$doso apk add build-base
 
 [ ! -f "uni2ascii-4.20.tar.gz" ] && \
 wget "https://github.com/ConzZah/uni2ascii-static-alpine/raw/refs/heads/main/uni2ascii-4.20.tar.gz"
@@ -43,4 +43,4 @@ strip uni2ascii ascii2uni
 $doso make install
 
 ## package
-7z a ../uni2ascii-$(uname -m).7z uni2ascii ascii2uni -mx=9
+tar -czf ../uni2ascii-$(uname -m).tar.gz uni2ascii ascii2uni
