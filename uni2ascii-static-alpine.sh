@@ -5,13 +5,17 @@
 doso=""
 [ "$(id -u)" = "1000" ] && doso="doas"
 
-$doso apk add build-base gettext-static
+$doso apk add build-base
 
 ## set $LDFLAGS
 export LDFLAGS="-static"
-
-## if on armv7l, apply workaround to ensure ld actually picks up gettext
-[ "$(uname -m)" = "armv7l" ] && \
+## turns out: if you have gettext installed,
+## the following workaround is needed for every arch, not just armv7l,
+## BUT: it will grow the executable from 150kb to about 450kb.
+## thus, it is conditional.
+gt=""
+gt="$(apk info| grep 'gettext.*')"
+[ -n "$gt" ] && \
 export LDFLAGS="-static -Wl,--whole-archive,/usr/lib/libintl.a,--no-whole-archive"
 
 
