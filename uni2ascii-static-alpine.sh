@@ -15,9 +15,11 @@ export LDFLAGS="-static"
 ## thus, it is conditional.
 gt=""
 gt="$(apk info| grep 'gettext.*')"
-[ -n "$gt" ] && \
+[ -n "$gt" ] && {
+printf '%s\n' "$gt"| { ! grep -q 'gettext-static' ;} && \
+$doso apk add gettext-static
 export LDFLAGS="-static -Wl,--whole-archive,/usr/lib/libintl.a,--no-whole-archive"
-
+}
 
 [ ! -f "uni2ascii-4.20.tar.gz" ] && \
 wget "https://github.com/ConzZah/uni2ascii-static-alpine/raw/refs/heads/main/uni2ascii-4.20.tar.gz"
