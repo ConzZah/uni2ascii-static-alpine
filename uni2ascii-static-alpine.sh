@@ -5,7 +5,15 @@
 doso=""
 [ "$(id -u)" = "1000" ] && doso="doas"
 
-$doso apk add build-base
+$doso apk add build-base gettext-static
+
+## set $LDFLAGS
+export LDFLAGS="-static"
+
+## if on armv7l, apply workaround to ensure ld actually picks up gettext
+[ "$(uname -m)" = "armv7l" ] && \
+export LDFLAGS="-static -Wl,--whole-archive,/usr/lib/libintl.a,--no-whole-archive"
+
 
 [ ! -f "uni2ascii-4.20.tar.gz" ] && \
 wget "https://github.com/ConzZah/uni2ascii-static-alpine/raw/refs/heads/main/uni2ascii-4.20.tar.gz"
@@ -38,7 +46,7 @@ sed -i '70i void putu8(wchar_t c);' 'uni2ascii.c'
 ## build
 ./configure
 make clean >/dev/null 2>&1
-make LDFLAGS='-static' || exit 1
+make || exit 1
 strip uni2ascii ascii2uni
 $doso make install
 
